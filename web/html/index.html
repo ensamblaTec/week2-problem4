@@ -1,0 +1,35 @@
+{{template "header"}}
+<main class="container m-3">
+    <div class="row">
+        <div class="col-auto">
+            <form hx-post="/add-product" hx-target="#products-cards" hx-swap="beforeend">
+                <div class="input-group mb-3">
+                    <span class="input-group-text" id="basic-addon1">🛍️</span>
+                    <input type="text" class="form-control" placeholder="Product Name" aria-label="ProductName"
+                        aria-describedby="basic-addon1" name="productName">
+                    <span class="input-group-text" id="basic-addon1">💰</span>
+                    <input type="text" class="form-control" placeholder="Price" aria-label="Price"
+                        aria-describedby="basic-addon1" name="productPrice">
+                </div>
+                <button type="submit" class="btn btn-primary">Add Product</button>
+            </form>
+        </div>
+        <div class="col-auto">
+            <div id="products-cards">
+                {{range .Products}}
+                {{block "product-cards-list" .}}
+                <div class="card" style="width: 18rem;">
+                    <img src="#" class="card-img-top" alt={{.Name}}>
+                    <div class="card-body">
+                        <h5 class="card-title">{{.Name}}</h5>
+                        <p class="card-text">Price: {{.Price}}</p>
+                        <a href="#" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+                {{end}}
+                {{end}}
+            </div>
+        </div>
+    </div>
+</main>
+{{template "footer"}}
