@@ -2,10 +2,10 @@
 
 ## Carácteristicas
 
-[] Muestra productos
-[] Registra producto: {Nombre, Precio, Imagen}
+[X] Muestra productos
+[X] Registra producto: {Nombre, Precio, Imagen}
 [] Guarda producto en un archivo .csv
-[] Incorpora htmx
+[X] Incorpora htmx
 
 ## Tecnologías
 

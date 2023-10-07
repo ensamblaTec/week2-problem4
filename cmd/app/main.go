@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/ensamblaTec/learning/week2/problema4/database"
 	"github.com/ensamblaTec/learning/week2/problema4/pkg/handler"
 	"github.com/ensamblaTec/learning/week2/problema4/pkg/models"
 	"github.com/labstack/echo/v4"
@@ -8,17 +9,28 @@ import (
 )
 
 func main() {
-	c := echo.New()
+	// init database
+	database.Initialize() // if exists
+	// end database
+	e := echo.New()
 
-	c.Use(middleware.Logger())
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, uri=${uri}, status=${status}\n",
+	}))
+
+	e.Use(middleware.Recover())
+
+	e.Static("/", "web/static")
 
 	tmpl := models.Init()
 
-	c.Renderer = tmpl
+	e.Renderer = tmpl
 
-	c.GET("/", handler.RunLogin)
+	e.GET("/", handler.RunApp)
 
-	c.POST("/add-product", handler.RegisterProduct)
+	e.POST("/products", handler.RegisterProduct)
 
-	c.Logger.Fatal(c.Start(":80"))
+	e.DELETE("/products", handler.DeleteProduct)
+
+	e.Logger.Fatal(e.Start(":80"))
 }

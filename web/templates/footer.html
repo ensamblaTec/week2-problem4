@@ -1,4 +1,11 @@
 {{define "footer"}}
+{{if .ErrorMensaje}}
+{{block "msgErrProductName" .}}
+    <script>
+        alert("Missing ProductName")
+    </script>
+{{end}}
+{{end}}
 </body>
 </html>
 {{end}}
