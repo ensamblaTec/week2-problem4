@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/ensamblaTec/learning/week2/problema4/database"
 	"github.com/ensamblaTec/learning/week2/problema4/pkg/models"
 	"github.com/ensamblaTec/learning/week2/problema4/pkg/utils"
 	"github.com/labstack/echo/v4"
@@ -13,23 +14,47 @@ import (
 
 var products = map[string][]*models.Product{
 	"Products": {
-		{
-			ID:    1,
-			Price: 20,
-			Name:  "P1",
-			Image: "https://i.giphy.com/media/AHj0lQstZ9I9W/giphy.webp",
-		},
-		{
-			ID:    2,
-			Price: 30,
-			Name:  "P2",
-			Image: "https://i.giphy.com/media/eSwGh3YK54JKU/giphy.webp",
-		},
+		// {
+		// 	ID:    1,
+		// 	Price: 20,
+		// 	Name:  "P1",
+		// 	Image: "https://i.giphy.com/media/AHj0lQstZ9I9W/giphy.webp",
+		// },
+		// {
+		// 	ID:    2,
+		// 	Price: 30,
+		// 	Name:  "P2",
+		// 	Image: "https://i.giphy.com/media/eSwGh3YK54JKU/giphy.webp",
+		// },
 	},
+}
+
+func InitializeProducts() {
+	if data, err := database.GetProducts(); err == nil {
+		for _, line := range strings.Split(data, "\n") {
+			pData := strings.Split(line, ",")
+			if len(pData) == 4 {
+				id, err := strconv.Atoi(pData[0])
+				if err != nil {
+					log.Println("Error to convert id string to int")
+				}
+				price, err := strconv.ParseFloat(pData[2], 32)
+				if err != nil {
+					log.Println("Error to convert price string to float32")
+				}
+				product := models.CreateProduct(id, pData[1], pData[3], price)
+				products["Products"] = append(products["Products"], product)
+			}
+		}
+	}
 }
 
 func GetProducts() map[string][]*models.Product {
 	return products
+}
+
+func SetProducts(data []*models.Product) {
+	products["Products"] = append(products["Products"], data...)
 }
 
 func RegisterProduct(c echo.Context) error {
@@ -59,13 +84,24 @@ func RegisterProduct(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	product := models.CreateProduct(
-		len(products["Products"])+1,
-		productName,
-		image,
-		productPrice,
-	)
+	var product *models.Product
+	if len(products["Products"]) == 0 {
+		product = models.CreateProduct(
+			1,
+			productName,
+			image,
+			productPrice,
+		)
+	} else {
+		product = models.CreateProduct(
+			products["Products"][len(products["Products"])-1].ID+1,
+			productName,
+			image,
+			productPrice,
+		)
+	}
 	products["Products"] = append(products["Products"], product)
+	database.AppendProduct(product.ToString())
 	return c.Render(http.StatusOK, "product-cards-list", product)
 }
 
@@ -82,25 +118,26 @@ func DeleteProduct(c echo.Context) error {
 	}
 
 	lw, sup := 0, len(products["Products"])-1
+
+	if sup == 0 {
+		products["Products"] = []*models.Product{}
+		database.DeleteProductByID(idConvert)
+		return c.Render(http.StatusOK, "product-cards-list", nil)
+	}
 	prom := 0
 	for lw <= sup {
-		prom = 1 + (lw-sup)/2
-
+		prom = lw + (sup-lw)/2
 		if products["Products"][prom].ID == idConvert {
 			products["Products"] = append(products["Products"][0:prom], products["Products"][prom+1:]...)
+			database.DeleteProductByID(idConvert)
 			break
 		}
-
-		if prom < sup {
-			sup = prom - 1
-		} else {
+		if products["Products"][prom].ID < idConvert {
 			lw = prom + 1
+		} else {
+			sup = prom - 1
 		}
 	}
-
-	log.Println(products["Products"])
-	log.Println(products["Products"][prom])
-	log.Println(products["Products"][prom].Price)
 
 	return c.Render(http.StatusOK, "product-cards-list", nil)
 }

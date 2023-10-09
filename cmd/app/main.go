@@ -11,6 +11,7 @@ import (
 func main() {
 	// init database
 	database.Initialize() // if exists
+	handler.InitializeProducts()
 	// end database
 	e := echo.New()
 

@@ -1,5 +1,7 @@
 package models
 
+import "fmt"
+
 type Product struct {
 	ID    int
 	Name  string
@@ -14,4 +16,8 @@ func CreateProduct(id int, name, image string, price float64) *Product {
 		Price: price,
 		Image: image,
 	}
+}
+
+func (product Product) ToString() string {
+	return fmt.Sprintf("%d,%s,%f,%s", product.ID, product.Name, product.Price, product.Image)
 }

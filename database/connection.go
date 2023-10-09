@@ -11,11 +11,13 @@ import (
 const FILENAME = "database/products.txt"
 
 func Initialize() error {
-	file, err := os.Create(FILENAME)
-	if err != nil {
-		return errCannotCreateFile
+	if _, err := os.Stat(FILENAME); os.IsNotExist(err) {
+		file, err := os.Create(FILENAME)
+		if err != nil {
+			return errCannotCreateFile
+		}
+		defer file.Close()
 	}
-	defer file.Close()
 	return nil
 }
 
@@ -25,7 +27,7 @@ func AppendProduct(info string) error {
 		return errCannotOpenFile
 	}
 	defer file.Close()
-	file.WriteString(info)
+	file.WriteString(info + "\n")
 	return nil
 }
 
@@ -46,7 +48,7 @@ func DeleteProductByID(idFind int) error {
 	for scanner.Scan() {
 		line := scanner.Text()
 		fields := strings.Split(line, ",")
-		if len(fields) > 3 {
+		if len(fields) == 4 {
 			idStr := strings.TrimSpace(fields[0])
 			id, err := strconv.Atoi(idStr)
 			if err != nil {
@@ -79,4 +81,13 @@ func DeleteProductByID(idFind int) error {
 
 func OpenFile() error {
 	return errCannotOpenFile
+}
+
+func GetProducts() (string, error) {
+	open, err := os.ReadFile(FILENAME)
+	if err != nil {
+		return "", errCannotOpenFile
+	}
+
+	return string(open), nil
 }
