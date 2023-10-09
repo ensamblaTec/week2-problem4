@@ -4,10 +4,11 @@ Para iniciar usar el comando <bold>air<bold>
 
 ## Carácteristicas
 
-[X] Muestra productos
-[X] Registra producto: {Nombre, Precio, Imagen}
-[X] Guarda producto en un archivo .csv (extensión .txt)
-[X] Incorpora htmx
+lista:
+[x] Muestra productos
+[x] Registra producto: {Nombre, Precio, Imagen}
+[x] Guarda producto en un archivo .csv (extensión .txt)
+[x] Incorpora htmx
 
 ## Tecnologías
 
