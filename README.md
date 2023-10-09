@@ -4,7 +4,7 @@
 
 [X] Muestra productos
 [X] Registra producto: {Nombre, Precio, Imagen}
-[] Guarda producto en un archivo .csv
+[X] Guarda producto en un archivo .csv (extensión .txt)
 [X] Incorpora htmx
 
 ## Tecnologías
